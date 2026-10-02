@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="在本机将 Markdown 转为 TXT 和 Word，支持人物卡模板和批量转换。">
+  <title>墨页 · Markdown 文档转换器</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314273c'/%3E%3Cpath d='M10 7h9l4 4v14H10z' fill='none' stroke='%235ee0cc' stroke-width='2'/%3E%3Cpath d='M14 15h5m-5 5h5' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="template.js" defer></script>
+  <script src="converter.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">M<span>↧</span></span><div><strong>墨页</strong><span class="brand-sub">MARKDOWN STUDIO</span></div></div>
+    <div class="local-label"><span aria-hidden="true">◈</span> 文件仅在本机处理</div>
+    <a class="help-button" id="offlineDownload" href="downloads/moye-offline.html" download="墨页转换器（双击打开）.html">下载离线版</a>
+    <button class="help-button" id="helpButton" aria-expanded="false" aria-controls="helpPanel">使用说明</button>
+  </header>
+  <aside id="helpPanel" class="help-panel" hidden>
+    <strong>三步完成转换</strong><ol><li>选择或拖入 .md 文件，也可以直接编辑示例。</li><li>选择人物卡或通用文档排版，需要时换一个 Word 模板。</li><li>勾选输出格式，点击“转换并下载”。多个结果会装进一个 ZIP。</li></ol>
+    <p>解压 ZIP 后，用 Word / WPS 打开 .docx。浏览器会询问保存位置，或存入“下载”文件夹。文件与模板只在本机浏览器内处理，关闭页面后不保留编辑内容。</p>
+  </aside>
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="section-caption">01 / 导入文件</div>
+      <button class="dropzone" id="dropzone" aria-label="选择 Markdown 文件，支持多选，也可拖入此处"><span class="upload-icon" aria-hidden="true">＋</span><strong>添加 Markdown 文件</strong><span>点击选择，或拖入此处</span><small>.md / .markdown · 支持多选</small></button>
+      <input id="fileInput" type="file" accept=".md,.markdown,text/markdown" multiple hidden>
+      <div class="file-heading"><h2>待转换文件 <span id="fileCount">1</span></h2><button class="text-button" id="newButton">新建</button></div>
+      <div id="fileList" class="file-list" aria-label="待转换文件"></div>
+      <div class="sidebar-bottom"><span class="small-mark" aria-hidden="true">M↓</span><p>从文字到文档<br><span>让设定保持原来的样子。</span></p></div>
+    </aside>
+    <section class="main-panel">
+      <div class="intro"><div><div class="eyebrow">文档转换工作台</div><h1>写好的内容，换一个格式。</h1><p>保留标题、加粗、列表与表格，导出可编辑的 Word。</p></div><span class="version-badge">公开版 1.0</span></div>
+      <section class="settings" aria-label="转换设置">
+        <div class="setting-block"><label for="layoutSelect">文档排版</label><select id="layoutSelect"><option value="card">人物设定卡</option><option value="general">通用文档</option></select><small id="layoutHint">首个标题后的两段用作副标题和姓名。</small></div>
+        <div class="setting-block template-block"><label>Word 样式模板</label><div class="template-row"><span id="templateName" title="公开版中性排版模板">内置排版模板</span><button id="templateButton" class="mini-button">更换</button><button id="templateReset" class="text-button" hidden>恢复</button></div><small>继承字体、标题样式、纸张与页边距。</small><input id="templateInput" type="file" accept=".docx" hidden></div>
+        <fieldset class="setting-block formats"><legend>输出格式</legend><label><input id="formatTxt" type="checkbox" checked> TXT <span>纯文本</span></label><label><input id="formatDocx" type="checkbox" checked> DOCX <span>Word 文档</span></label></fieldset>
+      </section>
+      <section class="editor-card">
+        <div class="editor-toolbar"><div class="current-file"><span class="md-badge">MD</span><strong id="currentName">人物设定卡（示例）.md</strong><span class="editable-label">可直接编辑</span></div><button id="renameButton" class="text-button">重命名</button></div>
+        <div class="panes">
+          <section class="source-pane"><div class="pane-header"><label for="editor">Markdown 原文</label><span id="charCount">0 字符</span></div><textarea id="editor" spellcheck="false" aria-label="Markdown 原文" placeholder="在这里粘贴 Markdown 内容，或从左侧添加文件…"></textarea></section>
+          <section class="preview-pane"><div class="pane-header"><div class="preview-tabs" role="tablist" aria-label="预览格式"><button role="tab" aria-selected="true" aria-controls="preview" id="tabDocument" data-view="document">文档预览</button><button role="tab" aria-selected="false" aria-controls="preview" id="tabTxt" data-view="txt" tabindex="-1">TXT 预览</button></div><span class="preview-tag">实时更新</span></div><div id="preview" class="preview" role="tabpanel" aria-labelledby="tabDocument"></div><p class="preview-note">内容与层级预览；实际字体、页眉页脚及分页以 Word 为准。</p></section>
+        </div>
+      </section>
+      <footer class="actionbar"><div><strong id="exportSummary">1 个文件 · 2 种格式</strong><p id="exportHint">结果打包为 ZIP，原文件不会被覆盖。</p></div><div class="export-actions"><label class="batch-option"><input id="batchAll" type="checkbox" checked> 转换全部文件</label><button id="exportButton" class="primary-button"><span aria-hidden="true">↓</span> 转换并下载</button></div></footer>
+      <div id="status" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+  <dialog id="renameDialog"><form id="renameForm"><h2>重命名文件</h2><label for="renameInput">文件名</label><input id="renameInput" required maxlength="140"><p>导出的 TXT 和 Word 会使用这个名称。</p><div class="dialog-actions"><button id="cancelRename" type="button" class="mini-button">取消</button><button type="submit" class="primary-button">保存</button></div></form></dialog>
+</body>
+</html>
