@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="在本机将 Markdown 转为 TXT 和 Word，支持人物卡模板和批量转换。">
+  <title>墨页 · Markdown 文档转换器</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2314273c'/%3E%3Cpath d='M10 7h9l4 4v14H10z' fill='none' stroke='%235ee0cc' stroke-width='2'/%3E%3Cpath d='M14 15h5m-5 5h5' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <style>
+:root{font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;color:#23334b;background:#f1f4f8;font-size:16px;font-synthesis:none;--ink:#14273c;--muted:#6a7b90;--line:#dfe6ef;--accent:#0d736c}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button,select,input[type=checkbox]{cursor:pointer}button{transition:background .15s,color .15s}button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #36b6aa;outline-offset:3px}button:disabled{opacity:.55;cursor:wait}button{border:0}button:hover{filter:brightness(.96)}[hidden]{display:none!important}.topbar{height:86px;padding:0 36px;display:flex;align-items:center;gap:26px;background:var(--ink);color:white}.brand{display:flex;gap:14px;align-items:center}.brand-icon{font-family:Georgia,serif;font-size:27px;color:#6ee0cf;border:1px solid #436276;width:45px;height:45px;display:grid;place-content:center;border-radius:11px;position:relative}.brand-icon span{position:absolute;right:2px;bottom:0;font:17px system-ui}.brand strong{font-size:23px;letter-spacing:3px;display:block}.brand-sub{font-size:10px;letter-spacing:2px;color:#9ab0c8}.local-label{margin-left:auto;font-size:14px;color:#b9cbdb;display:flex;align-items:center;gap:10px}.local-label span{color:#66dac7;font-size:21px}.help-button{color:#edf5fc;background:#223b54;padding:10px 17px;border-radius:7px;font-size:14px}.help-panel{margin:20px 32px 0;padding:22px 28px;background:white;border:1px solid var(--line);border-radius:10px;line-height:1.8}.help-panel p{color:var(--muted);margin-bottom:0}.workspace{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:calc(100vh - 86px);max-width:1800px;margin:auto}.sidebar{padding:34px 24px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column}.section-caption{font-size:12px;letter-spacing:1.7px;color:#73849a;margin-bottom:18px;font-weight:600}.dropzone{border:1.5px dashed #a9bccd;background:#f5f9fc;color:#233d56;border-radius:10px;padding:22px 10px;display:flex;flex-direction:column;align-items:center;width:100%;gap:11px}.dropzone.dragging{background:#e2f5f0;border-color:var(--accent)}.upload-icon{background:#e3ecf4;width:42px;height:42px;border-radius:11px;display:grid;place-content:center;font-size:29px;font-weight:300;color:#52718d}.dropzone strong{font-size:15px}.dropzone>span:not(.upload-icon){font-size:13px;color:var(--muted)}.dropzone small{font-size:12px;color:#8695a6}.file-heading{display:flex;align-items:center;justify-content:space-between;margin-top:30px;margin-bottom:13px}.file-heading h2{font-size:14px;margin:0}.file-heading h2 span{background:#eaf0f6;padding:2px 7px;border-radius:5px;color:#61778e;font-size:12px;margin-left:5px}.text-button{background:none;color:var(--accent);font-size:14px;padding:5px}.file-list{display:flex;flex-direction:column;gap:7px}.file-item{position:relative;border:1px solid transparent;border-radius:8px;display:flex;align-items:center;background:#f7f9fb;min-width:0}.file-item.active{background:#eaf4f2;border-color:#a8d2ca}.file-select{display:flex;align-items:center;gap:10px;padding:13px 8px 13px 11px;text-align:left;flex:1;min-width:0;background:transparent;color:#263b51}.file-icon{font-size:11px;background:white;border:1px solid #d5e2e8;border-radius:4px;padding:5px 3px;font-weight:700}.file-meta{min-width:0}.file-meta strong{display:block;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.file-meta small{font-size:12px;display:block;color:#7c8ca0;margin-top:5px}.remove-file{background:none;color:#708499;font-size:20px;padding:8px}.sidebar-bottom{display:flex;gap:12px;align-items:center;margin-top:auto;padding-top:70px}.small-mark{color:#7b8fa3;font:24px Georgia}.sidebar-bottom p{font-size:13px;line-height:1.8;color:#62758c;margin:0}.sidebar-bottom p span{font-size:12px;color:#98a6b5}.main-panel{padding:31px 34px 20px;min-width:0}.intro{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.eyebrow{color:#617892;font-size:12px;letter-spacing:2px;margin-bottom:10px}h1{font-size:27px;letter-spacing:-.5px;line-height:1.35;margin:0;font-weight:650}.intro p{color:var(--muted);font-size:14px;line-height:1.6;margin:10px 0 0}.version-badge{font-size:12px;color:#6b8095;border:1px solid #d4dde7;border-radius:20px;padding:6px 11px;white-space:nowrap}.settings{display:grid;grid-template-columns:1fr 1.15fr .9fr;border:1px solid var(--line);background:#fff;border-radius:10px;margin-bottom:22px;padding:19px 0}.setting-block{padding:0 22px;min-width:0;border:0;margin:0}.setting-block+.setting-block{border-left:1px solid var(--line)}.setting-block>label,.formats legend{display:block;font-size:13px;font-weight:600;color:#5c6e83;margin-bottom:10px}.setting-block small{display:block;color:#8a97a7;font-size:12px;line-height:1.6;margin-top:8px}.setting-block select{width:100%;max-width:230px;background:#f8fafc;border:1px solid #d5dfeb;border-radius:6px;padding:8px 10px;font-size:14px;color:var(--ink)}.template-row{display:flex;align-items:center;gap:8px;min-height:37px}.template-row>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px;flex:1}.mini-button{padding:7px 10px;border:1px solid #d3dee8;border-radius:6px;background:#fff;font-size:13px;white-space:nowrap;color:#466078}.formats legend{padding:0;float:left;width:100%}.formats label{display:inline-flex;align-items:center;font-size:14px;gap:5px;margin:7px 12px 0 0;color:#263c52;font-weight:500}.formats label span{font-size:12px;color:#8291a1}input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px;flex:none}.editor-card{background:white;border:1px solid #d7e1ec;border-radius:11px;overflow:hidden;box-shadow:0 4px 12px #132b4810}.editor-toolbar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:14px 19px;gap:12px}.current-file{display:flex;align-items:center;gap:11px;min-width:0}.current-file strong{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.md-badge{font-size:10px;letter-spacing:.5px;background:#edf3f7;color:#52748e;padding:5px;border-radius:4px}.editable-label{font-size:12px;color:#9aa7b5;white-space:nowrap}.panes{display:grid;grid-template-columns:1fr 1fr}.source-pane,.preview-pane{min-width:0}.source-pane{border-right:1px solid var(--line)}.pane-header{height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 19px;border-bottom:1px solid #eef2f7;font-size:13px;color:#62758d}.pane-header>span{font-size:12px;color:#97a4b4;white-space:nowrap}textarea{display:block;width:100%;height:430px;resize:vertical;border:0;padding:23px 22px;background:#fcfdff;font-family:Consolas,"Microsoft YaHei",monospace;font-size:14px;line-height:1.95;color:#50637b;tab-size:2}textarea:focus{outline-offset:-3px}.preview-tabs{display:flex;align-items:stretch;height:100%;gap:17px}.preview-tabs button{background:none;color:#8391a2;font-size:13px;padding:0 0;border-bottom:2px solid transparent}.preview-tabs button[aria-selected=true]{color:var(--accent);font-weight:600;border-color:var(--accent)}.preview{height:396px;overflow:auto;padding:25px 27px;font-size:14px;line-height:1.85;overflow-wrap:anywhere}.preview h1{font-family:Georgia,"Microsoft YaHei",serif;font-size:28px;letter-spacing:0;margin:0 0 9px;color:#1c3048}.preview .subtitle{font-size:16px;color:#70849a;margin:0 0 13px}.preview .name-line{font-size:16px;margin:0 0 20px}.preview h2{font-size:19px;font-weight:600;margin:25px 0 14px;color:#1e3d53}.preview h3{font-size:16px;margin:20px 0 10px}.preview h4{font-size:14px;margin:16px 0 7px}.preview p{margin:10px 0}.preview ul{padding-left:22px}.preview li{margin:7px 0}.table-wrap{overflow-x:auto}.preview table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;line-height:1.7}.preview td,.preview th{border:1px solid #d9d9d9;padding:8px 10px;text-align:left;vertical-align:top;min-width:65px}.preview th{background:#e8edf0;font-weight:600}.preview pre{font:14px/1.85 Consolas,"Microsoft YaHei",monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;color:#44566b}.preview-note{font-size:11px;line-height:1.5;color:#94a2b3;border-top:1px solid #eef2f7;padding:9px 16px;margin:0}.actionbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:23px}.actionbar strong{font-size:14px;color:#3c536a;font-weight:600}.actionbar p{font-size:12px;color:#8795a6;margin:6px 0 0}.export-actions{display:flex;gap:18px;align-items:center}.batch-option{display:flex;align-items:center;gap:5px;font-size:13px;color:#667990}.primary-button{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:white;padding:13px 23px;border-radius:7px;font-size:15px;font-weight:600;white-space:nowrap}.primary-button span{font-size:20px;line-height:1}#status{min-height:32px;color:var(--accent);font-size:13px;line-height:1.7;padding-top:12px}#status.error{color:#b63843}dialog{border:1px solid var(--line);border-radius:12px;padding:26px;width:min(420px,90vw);color:var(--ink);box-shadow:0 14px 60px #10243735}dialog::backdrop{background:#14273c66}dialog h2{font-size:20px;margin:0 0 22px}dialog label{display:block;font-size:14px;margin-bottom:8px}dialog input{border:1px solid #c3d1e0;border-radius:6px;width:100%;padding:10px}dialog p{font-size:13px;color:var(--muted)}.dialog-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:25px}.dialog-actions .primary-button{padding:9px 20px;font-size:14px}@media(min-width:1500px){textarea{height:530px}.preview{height:496px}.main-panel{padding:38px 48px}.workspace{grid-template-columns:290px minmax(0,1fr)}}@media(max-width:1150px){.workspace{grid-template-columns:225px minmax(0,1fr)}.sidebar{padding:28px 17px}.main-panel{padding:28px 22px}.settings{grid-template-columns:1fr 1.1fr}.formats{grid-column:1/-1;margin-top:16px;padding-top:15px!important;border-top:1px solid var(--line);border-left:0!important}.formats legend{float:none;width:auto;margin:0 14px 0 0;display:inline}.formats label{margin-top:0}.editable-label,.version-badge,.preview-tag{display:none}.actionbar{align-items:flex-start}.export-actions{gap:10px;flex-direction:column;align-items:flex-end}.template-row{gap:4px}h1{font-size:25px}}@media(max-width:760px){.topbar{height:75px;padding:0 18px;gap:12px}.local-label{font-size:12px}.local-label span{display:none}.brand-sub{display:none}.brand strong{font-size:20px}.brand-icon{width:36px;height:38px;font-size:23px}.help-button{font-size:12px;padding:8px}.workspace{display:block}.sidebar{padding:21px 18px;border-right:0;border-bottom:1px solid var(--line)}.section-caption,.sidebar-bottom{display:none}.dropzone{padding:15px;gap:7px}.upload-icon{display:none}.file-heading{margin-top:18px}.file-list{max-height:180px;overflow:auto}.main-panel{padding:25px 17px}.intro{margin-bottom:19px}.intro p{font-size:13px}h1{font-size:24px}.settings{grid-template-columns:1fr}.setting-block{padding:0 17px}.setting-block+.setting-block{border-left:0;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.formats{grid-column:auto}.panes{grid-template-columns:1fr}.source-pane{border-right:0;border-bottom:1px solid var(--line)}textarea{height:285px;font-size:14px}.preview{height:340px}.actionbar{flex-direction:column}.export-actions{width:100%;flex-direction:row;justify-content:space-between;align-items:center}.primary-button{padding:12px 17px}.current-file strong{font-size:12px}.editor-toolbar{padding:12px}.help-panel{margin:15px 17px 0;font-size:14px;padding:17px}}
+:root .setting-block>label,:root .formats legend,:root .pane-header,:root .preview-tabs button,:root .file-heading h2,:root .batch-option{font-size:14px}:root textarea{font-size:16px}:root .preview{font-size:16px}:root .preview td,:root .preview th{font-size:14px}:root .preview-note{font-size:12px}
+:root a.help-button{text-decoration:none;white-space:nowrap}@media(max-width:760px){:root .topbar{flex-wrap:wrap;height:auto;min-height:75px;padding-top:12px;padding-bottom:12px}:root .local-label{font-size:12px}:root a.help-button{margin-left:auto}}
+
+</style>
+  
+  
+  
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">M<span>↧</span></span><div><strong>墨页</strong><span class="brand-sub">MARKDOWN STUDIO</span></div></div>
+    <div class="local-label"><span aria-hidden="true">◈</span> 文件仅在本机处理</div>
+    
+    <button class="help-button" id="helpButton" aria-expanded="false" aria-controls="helpPanel">使用说明</button>
+  </header>
+  <aside id="helpPanel" class="help-panel" hidden>
+    <strong>三步完成转换</strong><ol><li>选择或拖入 .md 文件，也可以直接编辑示例。</li><li>选择人物卡或通用文档排版，需要时换一个 Word 模板。</li><li>勾选输出格式，点击“转换并下载”。多个结果会装进一个 ZIP。</li></ol>
+    <p>解压 ZIP 后，用 Word / WPS 打开 .docx。浏览器会询问保存位置，或存入“下载”文件夹。文件与模板只在本机浏览器内处理，关闭页面后不保留编辑内容。</p>
+  </aside>
+  <main class="workspace">
+    <aside class="sidebar">
+      <div class="section-caption">01 / 导入文件</div>
+      <button class="dropzone" id="dropzone" aria-label="选择 Markdown 文件，支持多选，也可拖入此处"><span class="upload-icon" aria-hidden="true">＋</span><strong>添加 Markdown 文件</strong><span>点击选择，或拖入此处</span><small>.md / .markdown · 支持多选</small></button>
+      <input id="fileInput" type="file" accept=".md,.markdown,text/markdown" multiple hidden>
+      <div class="file-heading"><h2>待转换文件 <span id="fileCount">1</span></h2><button class="text-button" id="newButton">新建</button></div>
+      <div id="fileList" class="file-list" aria-label="待转换文件"></div>
+      <div class="sidebar-bottom"><span class="small-mark" aria-hidden="true">M↓</span><p>从文字到文档<br><span>让设定保持原来的样子。</span></p></div>
+    </aside>
+    <section class="main-panel">
+      <div class="intro"><div><div class="eyebrow">文档转换工作台</div><h1>写好的内容，换一个格式。</h1><p>保留标题、加粗、列表与表格，导出可编辑的 Word。</p></div><span class="version-badge">公开版 1.0</span></div>
+      <section class="settings" aria-label="转换设置">
+        <div class="setting-block"><label for="layoutSelect">文档排版</label><select id="layoutSelect"><option value="card">人物设定卡</option><option value="general">通用文档</option></select><small id="layoutHint">首个标题后的两段用作副标题和姓名。</small></div>
+        <div class="setting-block template-block"><label>Word 样式模板</label><div class="template-row"><span id="templateName" title="公开版中性排版模板">内置排版模板</span><button id="templateButton" class="mini-button">更换</button><button id="templateReset" class="text-button" hidden>恢复</button></div><small>继承字体、标题样式、纸张与页边距。</small><input id="templateInput" type="file" accept=".docx" hidden></div>
+        <fieldset class="setting-block formats"><legend>输出格式</legend><label><input id="formatTxt" type="checkbox" checked> TXT <span>纯文本</span></label><label><input id="formatDocx" type="checkbox" checked> DOCX <span>Word 文档</span></label></fieldset>
+      </section>
+      <section class="editor-card">
+        <div class="editor-toolbar"><div class="current-file"><span class="md-badge">MD</span><strong id="currentName">人物设定卡（示例）.md</strong><span class="editable-label">可直接编辑</span></div><button id="renameButton" class="text-button">重命名</button></div>
+        <div class="panes">
+          <section class="source-pane"><div class="pane-header"><label for="editor">Markdown 原文</label><span id="charCount">0 字符</span></div><textarea id="editor" spellcheck="false" aria-label="Markdown 原文" placeholder="在这里粘贴 Markdown 内容，或从左侧添加文件…"></textarea></section>
+          <section class="preview-pane"><div class="pane-header"><div class="preview-tabs" role="tablist" aria-label="预览格式"><button role="tab" aria-selected="true" aria-controls="preview" id="tabDocument" data-view="document">文档预览</button><button role="tab" aria-selected="false" aria-controls="preview" id="tabTxt" data-view="txt" tabindex="-1">TXT 预览</button></div><span class="preview-tag">实时更新</span></div><div id="preview" class="preview" role="tabpanel" aria-labelledby="tabDocument"></div><p class="preview-note">内容与层级预览；实际字体、页眉页脚及分页以 Word 为准。</p></section>
+        </div>
+      </section>
+      <footer class="actionbar"><div><strong id="exportSummary">1 个文件 · 2 种格式</strong><p id="exportHint">结果打包为 ZIP，原文件不会被覆盖。</p></div><div class="export-actions"><label class="batch-option"><input id="batchAll" type="checkbox" checked> 转换全部文件</label><button id="exportButton" class="primary-button"><span aria-hidden="true">↓</span> 转换并下载</button></div></footer>
+      <div id="status" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+  <dialog id="renameDialog"><form id="renameForm"><h2>重命名文件</h2><label for="renameInput">文件名</label><input id="renameInput" required maxlength="140"><p>导出的 TXT 和 Word 会使用这个名称。</p><div class="dialog-actions"><button id="cancelRename" type="button" class="mini-button">取消</button><button type="submit" class="primary-button">保存</button></div></form></dialog>
+<script>
+// Neutral public Word template, generated without user documents.
+const DEFAULT_TEMPLATE_BASE64 = 'UEsDBBQAAAAAAMerQl1rTNYnIwMAACMDAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbDw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IlVURi04IiBzdGFuZGFsb25lPSJ5ZXMiPz48VHlwZXMgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9wYWNrYWdlLzIwMDYvY29udGVudC10eXBlcyI+PERlZmF1bHQgRXh0ZW5zaW9uPSJyZWxzIiBDb250ZW50VHlwZT0iYXBwbGljYXRpb24vdm5kLm9wZW54bWxmb3JtYXRzLXBhY2thZ2UucmVsYXRpb25zaGlwcyt4bWwiLz48RGVmYXVsdCBFeHRlbnNpb249InhtbCIgQ29udGVudFR5cGU9ImFwcGxpY2F0aW9uL3htbCIvPjxPdmVycmlkZSBQYXJ0TmFtZT0iL3dvcmQvZG9jdW1lbnQueG1sIiBDb250ZW50VHlwZT0iYXBwbGljYXRpb24vdm5kLm9wZW54bWxmb3JtYXRzLW9mZmljZWRvY3VtZW50LndvcmRwcm9jZXNzaW5nbWwuZG9jdW1lbnQubWFpbit4bWwiLz48T3ZlcnJpZGUgUGFydE5hbWU9Ii93b3JkL3N0eWxlcy54bWwiIENvbnRlbnRUeXBlPSJhcHBsaWNhdGlvbi92bmQub3BlbnhtbGZvcm1hdHMtb2ZmaWNlZG9jdW1lbnQud29yZHByb2Nlc3NpbmdtbC5zdHlsZXMreG1sIi8+PE92ZXJyaWRlIFBhcnROYW1lPSIvd29yZC9udW1iZXJpbmcueG1sIiBDb250ZW50VHlwZT0iYXBwbGljYXRpb24vdm5kLm9wZW54bWxmb3JtYXRzLW9mZmljZWRvY3VtZW50LndvcmRwcm9jZXNzaW5nbWwubnVtYmVyaW5nK3htbCIvPjxPdmVycmlkZSBQYXJ0TmFtZT0iL2RvY1Byb3BzL2NvcmUueG1sIiBDb250ZW50VHlwZT0iYXBwbGljYXRpb24vdm5kLm9wZW54bWxmb3JtYXRzLXBhY2thZ2UuY29yZS1wcm9wZXJ0aWVzK3htbCIvPjwvVHlwZXM+UEsDBBQAAAAAAMerQl2IffNdugEAALoBAAALAAAAX3JlbHMvLnJlbHM8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCIgc3RhbmRhbG9uZT0ieWVzIj8+PFJlbGF0aW9uc2hpcHMgeG1sbnM9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9wYWNrYWdlLzIwMDYvcmVsYXRpb25zaGlwcyI+PFJlbGF0aW9uc2hpcCBJZD0icklkMSIgVHlwZT0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL29mZmljZURvY3VtZW50LzIwMDYvcmVsYXRpb25zaGlwcy9vZmZpY2VEb2N1bWVudCIgVGFyZ2V0PSJ3b3JkL2RvY3VtZW50LnhtbCIvPjxSZWxhdGlvbnNoaXAgSWQ9InJJZDIiIFR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9wYWNrYWdlLzIwMDYvcmVsYXRpb25zaGlwcy9tZXRhZGF0YS9jb3JlLXByb3BlcnRpZXMiIFRhcmdldD0iZG9jUHJvcHMvY29yZS54bWwiLz48L1JlbGF0aW9uc2hpcHM+UEsDBBQAAAAAAMerQl2e+IO3oQEAAKEBAAARAAAAd29yZC9kb2N1bWVudC54bWw8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCIgc3RhbmRhbG9uZT0ieWVzIj8+PHc6ZG9jdW1lbnQgeG1sbnM6dz0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL3dvcmRwcm9jZXNzaW5nbWwvMjAwNi9tYWluIiB4bWxuczpyPSJodHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvb2ZmaWNlRG9jdW1lbnQvMjAwNi9yZWxhdGlvbnNoaXBzIj48dzpib2R5Pjx3OnAvPjx3OnNlY3RQcj48dzpwZ1N6IHc6dz0iMTE5MDYiIHc6aD0iMTY4MzgiLz48dzpwZ01hciB3OnRvcD0iMTIxOSIgdzpyaWdodD0iMTI3NiIgdzpib3R0b209IjExNjIiIHc6bGVmdD0iMTI3NiIgdzpoZWFkZXI9IjQ4MiIgdzpmb290ZXI9IjUxMCIgdzpndXR0ZXI9IjAiLz48L3c6c2VjdFByPjwvdzpib2R5Pjwvdzpkb2N1bWVudD5QSwMEFAAAAAAAx6tCXeE+RhGfAQAAnwEAABwAAAB3b3JkL19yZWxzL2RvY3VtZW50LnhtbC5yZWxzPD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxSZWxhdGlvbnNoaXBzIHhtbG5zPSJodHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvcGFja2FnZS8yMDA2L3JlbGF0aW9uc2hpcHMiPjxSZWxhdGlvbnNoaXAgSWQ9InJJZDEiIFR5cGU9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9vZmZpY2VEb2N1bWVudC8yMDA2L3JlbGF0aW9uc2hpcHMvc3R5bGVzIiBUYXJnZXQ9InN0eWxlcy54bWwiLz48UmVsYXRpb25zaGlwIElkPSJySWQyIiBUeXBlPSJodHRwOi8vc2NoZW1hcy5vcGVueG1sZm9ybWF0cy5vcmcvb2ZmaWNlRG9jdW1lbnQvMjAwNi9yZWxhdGlvbnNoaXBzL251bWJlcmluZyIgVGFyZ2V0PSJudW1iZXJpbmcueG1sIi8+PC9SZWxhdGlvbnNoaXBzPlBLAwQUAAAAAADHq0JdJ2xcWWoMAABqDAAADwAAAHdvcmQvc3R5bGVzLnhtbDw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IlVURi04IiBzdGFuZGFsb25lPSJ5ZXMiPz48dzpzdHlsZXMgeG1sbnM6dz0iaHR0cDovL3NjaGVtYXMub3BlbnhtbGZvcm1hdHMub3JnL3dvcmRwcm9jZXNzaW5nbWwvMjAwNi9tYWluIj48dzpkb2NEZWZhdWx0cz48dzpyUHJEZWZhdWx0Pjx3OnJQcj48dzpyRm9udHMgdzphc2NpaT0iQXB0b3MiIHc6aEFuc2k9IkFwdG9zIiB3OmVhc3RBc2lhPSJNaWNyb3NvZnQgWWFIZWkiLz48dzpzeiB3OnZhbD0iMjIiLz48dzpzekNzIHc6dmFsPSIyMiIvPjx3Omxhbmcgdzp2YWw9ImVuLVVTIiB3OmVhc3RBc2lhPSJ6aC1DTiIvPjwvdzpyUHI+PC93OnJQckRlZmF1bHQ+PHc6cFByRGVmYXVsdD48dzpwUHI+PHc6c3BhY2luZyB3OmFmdGVyPSIxMjAiIHc6bGluZT0iMzEyIiB3OmxpbmVSdWxlPSJhdXRvIi8+PC93OnBQcj48L3c6cFByRGVmYXVsdD48L3c6ZG9jRGVmYXVsdHM+PHc6c3R5bGUgdzp0eXBlPSJwYXJhZ3JhcGgiIHc6ZGVmYXVsdD0iMSIgdzpzdHlsZUlkPSJOb3JtYWwiPjx3Om5hbWUgdzp2YWw9Ik5vcm1hbCIvPjx3OnFGb3JtYXQvPjwvdzpzdHlsZT48dzpzdHlsZSB3OnR5cGU9InBhcmFncmFwaCIgdzpzdHlsZUlkPSJUaXRsZSI+PHc6bmFtZSB3OnZhbD0iVGl0bGUiLz48dzpiYXNlZE9uIHc6dmFsPSJOb3JtYWwiLz48dzpuZXh0IHc6dmFsPSJOb3JtYWwiLz48dzpxRm9ybWF0Lz48dzpwUHI+PHc6c3BhY2luZyB3OmJlZm9yZT0iMCIgdzphZnRlcj0iMTgwIi8+PC93OnBQcj48dzpyUHI+PHc6c3ogdzp2YWw9IjQ4Ii8+PHc6c3pDcyB3OnZhbD0iNDgiLz48dzpjb2xvciB3OnZhbD0iMDAwMDAwIi8+PC93OnJQcj48L3c6c3R5bGU+PHc6c3R5bGUgdzp0eXBlPSJwYXJhZ3JhcGgiIHc6c3R5bGVJZD0iU3VidGl0bGUiPjx3Om5hbWUgdzp2YWw9IlN1YnRpdGxlIi8+PHc6YmFzZWRPbiB3OnZhbD0iTm9ybWFsIi8+PHc6bmV4dCB3OnZhbD0iTm9ybWFsIi8+PHc6cUZvcm1hdC8+PHc6cFByPjx3OnNwYWNpbmcgdzpiZWZvcmU9IjAiIHc6YWZ0ZXI9IjE4MCIvPjwvdzpwUHI+PHc6clByPjx3OnN6IHc6dmFsPSIyNiIvPjx3OnN6Q3Mgdzp2YWw9IjI2Ii8+PHc6Y29sb3Igdzp2YWw9IjYxNzU4QSIvPjwvdzpyUHI+PC93OnN0eWxlPjx3OnN0eWxlIHc6dHlwZT0icGFyYWdyYXBoIiB3OnN0eWxlSWQ9IkhlYWRpbmcxIj48dzpuYW1lIHc6dmFsPSJIZWFkaW5nMSIvPjx3OmJhc2VkT24gdzp2YWw9Ik5vcm1hbCIvPjx3Om5leHQgdzp2YWw9Ik5vcm1hbCIvPjx3OnFGb3JtYXQvPjx3OnBQcj48dzpzcGFjaW5nIHc6YmVmb3JlPSIyMjAiIHc6YWZ0ZXI9IjE0MCIvPjx3OmtlZXBOZXh0Lz48dzprZWVwTGluZXMvPjx3Om91dGxpbmVMdmwgdzp2YWw9IjAiLz48L3c6cFByPjx3OnJQcj48dzpzeiB3OnZhbD0iMzIiLz48dzpzekNzIHc6dmFsPSIzMiIvPjx3OmNvbG9yIHc6dmFsPSIwMDAwMDAiLz48dzpiLz48L3c6clByPjwvdzpzdHlsZT48dzpzdHlsZSB3OnR5cGU9InBhcmFncmFwaCIgdzpzdHlsZUlkPSJIZWFkaW5nMiI+PHc6bmFtZSB3OnZhbD0iSGVhZGluZzIiLz48dzpiYXNlZE9uIHc6dmFsPSJOb3JtYWwiLz48dzpuZXh0IHc6dmFsPSJOb3JtYWwiLz48dzpxRm9ybWF0Lz48dzpwUHI+PHc6c3BhY2luZyB3OmJlZm9yZT0iMjIwIiB3OmFmdGVyPSIxNDAiLz48dzprZWVwTmV4dC8+PHc6a2VlcExpbmVzLz48dzpvdXRsaW5lTHZsIHc6dmFsPSIxIi8+PC93OnBQcj48dzpyUHI+PHc6c3ogdzp2YWw9IjI4Ii8+PHc6c3pDcyB3OnZhbD0iMjgiLz48dzpjb2xvciB3OnZhbD0iMDAwMDAwIi8+PHc6Yi8+PC93OnJQcj48L3c6c3R5bGU+PHc6c3R5bGUgdzp0eXBlPSJwYXJhZ3JhcGgiIHc6c3R5bGVJZD0iSGVhZGluZzMiPjx3Om5hbWUgdzp2YWw9IkhlYWRpbmczIi8+PHc6YmFzZWRPbiB3OnZhbD0iTm9ybWFsIi8+PHc6bmV4dCB3OnZhbD0iTm9ybWFsIi8+PHc6cUZvcm1hdC8+PHc6cFByPjx3OnNwYWNpbmcgdzpiZWZvcmU9IjIyMCIgdzphZnRlcj0iMTQwIi8+PHc6a2VlcE5leHQvPjx3OmtlZXBMaW5lcy8+PHc6b3V0bGluZUx2bCB3OnZhbD0iMiIvPjwvdzpwUHI+PHc6clByPjx3OnN6IHc6dmFsPSIyNCIvPjx3OnN6Q3Mgdzp2YWw9IjI0Ii8+PHc6Y29sb3Igdzp2YWw9IjAwMDAwMCIvPjx3OmIvPjwvdzpyUHI+PC93OnN0eWxlPjx3OnN0eWxlIHc6dHlwZT0icGFyYWdyYXBoIiB3OnN0eWxlSWQ9IkhlYWRpbmc0Ij48dzpuYW1lIHc6dmFsPSJIZWFkaW5nNCIvPjx3OmJhc2VkT24gdzp2YWw9Ik5vcm1hbCIvPjx3Om5leHQgdzp2YWw9Ik5vcm1hbCIvPjx3OnFGb3JtYXQvPjx3OnBQcj48dzpzcGFjaW5nIHc6YmVmb3JlPSIyMjAiIHc6YWZ0ZXI9IjE0MCIvPjx3OmtlZXBOZXh0Lz48dzprZWVwTGluZXMvPjx3Om91dGxpbmVMdmwgdzp2YWw9IjMiLz48L3c6cFByPjx3OnJQcj48dzpzeiB3OnZhbD0iMjMiLz48dzpzekNzIHc6dmFsPSIyMyIvPjx3OmNvbG9yIHc6dmFsPSIwMDAwMDAiLz48dzpiLz48L3c6clByPjwvdzpzdHlsZT48dzpzdHlsZSB3OnR5cGU9InBhcmFncmFwaCIgdzpzdHlsZUlkPSJIZWFkaW5nNSI+PHc6bmFtZSB3OnZhbD0iSGVhZGluZzUiLz48dzpiYXNlZE9uIHc6dmFsPSJOb3JtYWwiLz48dzpuZXh0IHc6dmFsPSJOb3JtYWwiLz48dzpxRm9ybWF0Lz48dzpwUHI+PHc6c3BhY2luZyB3OmJlZm9yZT0iMjIwIiB3OmFmdGVyPSIxNDAiLz48dzprZWVwTmV4dC8+PHc6a2VlcExpbmVzLz48dzpvdXRsaW5lTHZsIHc6dmFsPSI0Ii8+PC93OnBQcj48dzpyUHI+PHc6c3ogdzp2YWw9IjIyIi8+PHc6c3pDcyB3OnZhbD0iMjIiLz48dzpjb2xvciB3OnZhbD0iMDAwMDAwIi8+PHc6Yi8+PC93OnJQcj48L3c6c3R5bGU+PHc6c3R5bGUgdzp0eXBlPSJwYXJhZ3JhcGgiIHc6c3R5bGVJZD0iTGlzdEJ1bGxldCI+PHc6bmFtZSB3OnZhbD0iTGlzdEJ1bGxldCIvPjx3OmJhc2VkT24gdzp2YWw9Ik5vcm1hbCIvPjx3Om5leHQgdzp2YWw9Ik5vcm1hbCIvPjx3OnFGb3JtYXQvPjx3OnBQcj48dzpzcGFjaW5nIHc6YmVmb3JlPSIwIiB3OmFmdGVyPSIxMDAiLz48dzpudW1Qcj48dzppbHZsIHc6dmFsPSIwIi8+PHc6bnVtSWQgdzp2YWw9IjEiLz48L3c6bnVtUHI+PC93OnBQcj48dzpyUHI+PHc6c3ogdzp2YWw9IjIyIi8+PHc6c3pDcyB3OnZhbD0iMjIiLz48dzpjb2xvciB3OnZhbD0iMDAwMDAwIi8+PC93OnJQcj48L3c6c3R5bGU+PC93OnN0eWxlcz5QSwMEFAAAAAAAx6tCXajQBuNAAgAAQAIAABIAAAB3b3JkL251bWJlcmluZy54bWw8P3htbCB2ZXJzaW9uPSIxLjAiIGVuY29kaW5nPSJVVEYtOCIgc3RhbmRhbG9uZT0ieWVzIj8+PHc6bnVtYmVyaW5nIHhtbG5zOnc9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy93b3JkcHJvY2Vzc2luZ21sLzIwMDYvbWFpbiI+PHc6YWJzdHJhY3ROdW0gdzphYnN0cmFjdE51bUlkPSIwIj48dzptdWx0aUxldmVsVHlwZSB3OnZhbD0ic2luZ2xlTGV2ZWwiLz48dzpsdmwgdzppbHZsPSIwIj48dzpzdGFydCB3OnZhbD0iMSIvPjx3Om51bUZtdCB3OnZhbD0iYnVsbGV0Ii8+PHc6bHZsVGV4dCB3OnZhbD0i4oCiIi8+PHc6bHZsSmMgdzp2YWw9ImxlZnQiLz48dzpwUHI+PHc6dGFicz48dzp0YWIgdzp2YWw9Im51bSIgdzpwb3M9IjM2MCIvPjwvdzp0YWJzPjx3OmluZCB3OmxlZnQ9IjM2MCIgdzpoYW5naW5nPSIyNDAiLz48L3c6cFByPjx3OnJQcj48dzpyRm9udHMgdzphc2NpaT0iQXJpYWwiIHc6aEFuc2k9IkFyaWFsIi8+PC93OnJQcj48L3c6bHZsPjwvdzphYnN0cmFjdE51bT48dzpudW0gdzpudW1JZD0iMSI+PHc6YWJzdHJhY3ROdW1JZCB3OnZhbD0iMCIvPjwvdzpudW0+PC93Om51bWJlcmluZz5QSwMEFAAAAAAAx6tCXUBTLYYDAQAAAwEAABEAAABkb2NQcm9wcy9jb3JlLnhtbDw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9IlVURi04IiBzdGFuZGFsb25lPSJ5ZXMiPz48Y3A6Y29yZVByb3BlcnRpZXMgeG1sbnM6Y3A9Imh0dHA6Ly9zY2hlbWFzLm9wZW54bWxmb3JtYXRzLm9yZy9wYWNrYWdlLzIwMDYvbWV0YWRhdGEvY29yZS1wcm9wZXJ0aWVzIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPjxkYzp0aXRsZT5NYXJrZG93biBkb2N1bWVudDwvZGM6dGl0bGU+PC9jcDpjb3JlUHJvcGVydGllcz5QSwECFAAUAAAAAADHq0Jda0zWJyMDAAAjAwAAEwAAAAAAAAAAAAAAgAEAAAAAW0NvbnRlbnRfVHlwZXNdLnhtbFBLAQIUABQAAAAAAMerQl2IffNdugEAALoBAAALAAAAAAAAAAAAAACAAVQDAABfcmVscy8ucmVsc1BLAQIUABQAAAAAAMerQl2e+IO3oQEAAKEBAAARAAAAAAAAAAAAAACAATcFAAB3b3JkL2RvY3VtZW50LnhtbFBLAQIUABQAAAAAAMerQl3hPkYRnwEAAJ8BAAAcAAAAAAAAAAAAAACAAQcHAAB3b3JkL19yZWxzL2RvY3VtZW50LnhtbC5yZWxzUEsBAhQAFAAAAAAAx6tCXSdsXFlqDAAAagwAAA8AAAAAAAAAAAAAAIAB4AgAAHdvcmQvc3R5bGVzLnhtbFBLAQIUABQAAAAAAMerQl2o0AbjQAIAAEACAAASAAAAAAAAAAAAAACAAXcVAAB3b3JkL251bWJlcmluZy54bWxQSwECFAAUAAAAAADHq0JdQFMthgMBAAADAQAAEQAAAAAAAAAAAAAAgAHnFwAAZG9jUHJvcHMvY29yZS54bWxQSwUGAAAAAAcABwC/AQAAGRkAAAAA';
+
+</script>
+<script>
+/* All conversion happens locally. No network requests or external libraries. */
+(function (root) {
+  'use strict';
+  const encoder = new TextEncoder();
+  const decoder = new TextDecoder('utf-8', { fatal: true });
+  const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  const WIDTH_HINTS = { '项目|设定': [2000, 7350], '人物|设定': [2000, 7350], '年份|年龄|经历': [1600, 1400, 6350], '时间|事件|对她的影响': [1600, 3200, 4550] };
+  const crcTable = Array.from({ length: 256 }, (_, n) => {
+    for (let i = 0; i < 8; i++) n = (n & 1) ? (0xedb88320 ^ (n >>> 1)) : (n >>> 1);
+    return n >>> 0;
+  });
+  function crc32(bytes) {
+    let crc = 0xffffffff;
+    for (const byte of bytes) crc = crcTable[(crc ^ byte) & 255] ^ (crc >>> 8);
+    return (crc ^ 0xffffffff) >>> 0;
+  }
+  function joinBytes(parts) {
+    const out = new Uint8Array(parts.reduce((n, p) => n + p.length, 0));
+    let offset = 0;
+    for (const part of parts) { out.set(part, offset); offset += part.length; }
+    return out;
+  }
+  function zip(entries) {
+    const chunks = [], central = [];
+    let offset = 0;
+    const now = new Date();
+    const time = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+    const date = ((Math.max(1980, now.getFullYear()) - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+    for (const [name, data] of entries) {
+      const bytes = typeof data === 'string' ? encoder.encode(data) : data;
+      const nameBytes = encoder.encode(name), crc = crc32(bytes);
+      const head = new Uint8Array(30), h = new DataView(head.buffer);
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x800, true);
+      h.setUint16(10, time, true); h.setUint16(12, date, true); h.setUint32(14, crc, true);
+      h.setUint32(18, bytes.length, true); h.setUint32(22, bytes.length, true); h.setUint16(26, nameBytes.length, true);
+      chunks.push(head, nameBytes, bytes);
+      const center = new Uint8Array(46), c = new DataView(center.buffer);
+      c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x800, true);
+      c.setUint16(12, time, true); c.setUint16(14, date, true); c.setUint32(16, crc, true);
+      c.setUint32(20, bytes.length, true); c.setUint32(24, bytes.length, true); c.setUint16(28, nameBytes.length, true); c.setUint32(42, offset, true);
+      central.push(center, nameBytes); offset += head.length + nameBytes.length + bytes.length;
+    }
+    const directory = joinBytes(central), end = new Uint8Array(22), e = new DataView(end.buffer);
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, entries.length, true); e.setUint16(10, entries.length, true);
+    e.setUint32(12, directory.length, true); e.setUint32(16, offset, true);
+    return joinBytes([...chunks, directory, end]);
+  }
+  async function unzip(bytes) {
+    if (bytes.length > 20 * 1024 * 1024) throw new Error('Word 模板不能超过 20 MB。');
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    let end = -1;
+    for (let p = bytes.length - 22; p >= Math.max(0, bytes.length - 65557); p--) {
+      if (view.getUint32(p, true) === 0x06054b50 && p + 22 + view.getUint16(p + 20, true) === bytes.length) { end = p; break; }
+    }
+    if (end < 0) throw new Error('这不是有效的 DOCX 文件，或文件已经损坏。');
+    const count = view.getUint16(end + 10, true);
+    let position = view.getUint32(end + 16, true), totalSize = 0;
+    if (view.getUint16(end + 4, true) || view.getUint16(end + 6, true) || count === 65535 || count > 2048) throw new Error('这个模板的压缩格式不受支持，请用 Word 另存为普通 DOCX。');
+    const entries = [];
+    try {
+      for (let i = 0; i < count; i++) {
+        if (view.getUint32(position, true) !== 0x02014b50) throw new Error('Word 模板的文件目录已损坏。');
+        const flags = view.getUint16(position + 8, true), method = view.getUint16(position + 10, true);
+        const crc = view.getUint32(position + 16, true), size = view.getUint32(position + 20, true), fullSize = view.getUint32(position + 24, true);
+        const nameLen = view.getUint16(position + 28, true), extraLen = view.getUint16(position + 30, true), commentLen = view.getUint16(position + 32, true);
+        const start = view.getUint32(position + 42, true);
+        const name = decoder.decode(bytes.slice(position + 46, position + 46 + nameLen));
+        totalSize += fullSize;
+        if (fullSize > 16 * 1024 * 1024 || totalSize > 64 * 1024 * 1024) throw new Error('模板解压后过大，请使用内容较少的 Word 样式模板。');
+        if (flags & 1) throw new Error('暂不支持加密模板，请先在 Word 中取消密码。');
+        if (view.getUint32(start, true) !== 0x04034b50) throw new Error('Word 模板已损坏。');
+        const dataStart = start + 30 + view.getUint16(start + 26, true) + view.getUint16(start + 28, true);
+        if (dataStart + size > bytes.length) throw new Error('Word 模板的文件内容不完整。');
+        let data = bytes.slice(dataStart, dataStart + size);
+        if (method === 8) {
+          let stream;
+          try { stream = new DecompressionStream('deflate-raw'); }
+          catch { throw new Error('当前浏览器无法读取压缩模板，请用新版 Edge 或 Chrome 打开应用。'); }
+          const reader = new Blob([data]).stream().pipeThrough(stream).getReader(), pieces = [];
+          let length = 0;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            length += value.length;
+            if (length > fullSize) { await reader.cancel(); throw new Error('模板压缩内容的大小不匹配。'); }
+            pieces.push(value);
+          }
+          data = joinBytes(pieces);
+        } else if (method !== 0) throw new Error('模板使用了不支持的压缩格式，请用 Word 重新保存。');
+        if (data.length !== fullSize || crc32(data) !== crc) throw new Error('模板内容校验失败，请重新选择未损坏的文件。');
+        entries.push([name, data]); position += 46 + nameLen + extraLen + commentLen;
+      }
+    } catch (err) {
+      if (err instanceof RangeError) throw new Error('Word 模板的数据不完整。');
+      throw err;
+    }
+    if (new Set(entries.map(e => e[0])).size !== entries.length) throw new Error('模板包含重复的文件条目，请重新保存。');
+    return entries;
+  }
+  function mdToTxt(md) {
+    const lines = md.replace(/\r\n/g, '\n').split('\n'), out = [];
+    for (let i = 0; i < lines.length; i++) {
+      let s = lines[i].trim();
+      if (/^\|[\s\-|:]+\|$/.test(s)) continue;
+      if (s.startsWith('|')) { out.push(s.replace(/^\|+|\|+$/g, '').split('|').map(c => c.trim()).join('｜')); continue; }
+      s = s.replace(/^#{1,6}\s*/, '').replace(/\*\*/g, '');
+      if (s.startsWith('- ')) {
+        out.push('• ' + s.slice(2));
+        if (!(i + 1 < lines.length && lines[i + 1].trim() === '')) out.push('');
+      } else out.push(s);
+    }
+    return out.join('\n').replace(/^\n+|\n+$/g, '') + '\n';
+  }
+  function parse(md, layout = 'card') {
+    const lines = md.replace(/\r\n/g, '\n').split('\n'), blocks = [];
+    let titleDone = false, cardStage = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const s = lines[i].trim();
+      if (!s) continue;
+      if (s.startsWith('|')) {
+        const rows = [];
+        while (i < lines.length && lines[i].trim().startsWith('|')) {
+          const row = lines[i].trim();
+          if (!/^\|[\s\-|:]+\|$/.test(row)) rows.push(row.replace(/^\|+|\|+$/g, '').split('|').map(c => c.trim()));
+          i++;
+        }
+        i--;
+        if (rows.length) {
+          const ncol = rows.reduce((max, row) => Math.max(max, row.length), 0);
+          rows.forEach(row => { while (row.length < ncol) row.push(''); });
+          blocks.push({ type: 'table', rows });
+        }
+        cardStage = 0; continue;
+      }
+      const heading = s.match(/^(#{1,6})\s+(.*)$/);
+      if (heading && heading[1].length === 1 && !titleDone) {
+        blocks.push({ type: 'title', text: heading[2] }); titleDone = true; cardStage = layout === 'card' ? 1 : 0; continue;
+      }
+      if (cardStage && !heading && !s.startsWith('- ')) {
+        blocks.push({ type: cardStage === 1 ? 'subtitle' : 'name', text: s });
+        cardStage = cardStage === 1 ? 2 : 0; continue;
+      }
+      cardStage = 0;
+      if (heading) blocks.push({ type: 'heading', level: Math.min(5, Math.max(1, heading[1].length - 1)), text: heading[2] });
+      else if (/^\*\*[^*]+\*\*$/.test(s)) blocks.push({ type: 'heading', level: 3, text: s.slice(2, -2) });
+      else if (s.startsWith('- ')) blocks.push({ type: 'bullet', text: s.slice(2) });
+      else blocks.push({ type: 'paragraph', text: s });
+    }
+    return blocks;
+  }
+  function escapeXml(value) {
+    return Array.from(String(value)).filter(c => { const cp = c.codePointAt(0); return cp === 9 || cp === 10 || cp === 13 || (cp >= 32 && cp <= 0xd7ff) || (cp >= 0xe000 && cp <= 0xfffd) || (cp >= 0x10000 && cp <= 0x10ffff); }).join('').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  }
+  function inlineParts(text) {
+    return text.split(/(\*\*.+?\*\*)/g).filter(Boolean).map(s => ({ text: s.startsWith('**') && s.endsWith('**') && s.length > 4 ? s.slice(2, -2) : s, bold: s.startsWith('**') && s.endsWith('**') && s.length > 4 }));
+  }
+  function runs(text, { bold = false, size = null, noBold = false } = {}) {
+    return inlineParts(text).map(part => {
+      const props = (!noBold && (bold || part.bold) ? '<w:b/>' : '') + (size ? `<w:sz w:val="${size}"/><w:szCs w:val="${size}"/>` : '');
+      return `<w:r>${props ? `<w:rPr>${props}</w:rPr>` : ''}<w:t xml:space="preserve">${escapeXml(part.text)}</w:t></w:r>`;
+    }).join('');
+  }
+  function validateXml(text) {
+    if (typeof DOMParser !== 'undefined') {
+      const xml = new DOMParser().parseFromString(text, 'application/xml');
+      if (xml.getElementsByTagName('parsererror').length) throw new Error('模板内部 XML 损坏，请用 Word 重新保存。');
+    }
+  }
+  function templateInfo(entries) {
+    const map = new Map(entries);
+    if (!map.has('word/document.xml') || !map.has('[Content_Types].xml') || !map.has('word/styles.xml')) throw new Error('请选择标准 .docx 文件，不能使用 .doc 或 .dotx。');
+    const document = decoder.decode(map.get('word/document.xml')), styles = decoder.decode(map.get('word/styles.xml'));
+    validateXml(document); validateXml(styles);
+    if (!document.includes(W) || !/<w:body(?:\s[^>]*)?>/.test(document)) throw new Error('暂不支持此模板的 Word XML 格式，请用 Word 另存为标准 DOCX。');
+    const body = document.match(/<w:body(?:\s[^>]*)?>([\s\S]*?)<\/w:body>/);
+    if (!body) throw new Error('模板中没有有效的文档正文。');
+    const sections = Array.from(body[1].matchAll(/<w:sectPr\b[^>]*(?:\/>|>[\s\S]*?<\/w:sectPr>)/g));
+    const lastSection = sections.at(-1);
+    const section = lastSection && !body[1].slice(lastSection.index + lastSection[0].length).trim() ? lastSection[0] : '';
+    const availableStyles = new Map();
+    for (const match of styles.matchAll(/<w:style\b([^>]*)>([\s\S]*?)<\/w:style>/g)) {
+      const id = (match[1].match(/\bw:styleId="([^"]+)"/) || [])[1];
+      const name = (match[2].match(/<w:name\b[^>]*w:val="([^"]+)"/) || [])[1];
+      if (id) { availableStyles.set(id.toLowerCase(), id); if (name) availableStyles.set(name.toLowerCase().replace(/\s/g, ''), id); }
+    }
+    const resolve = name => availableStyles.get(name.toLowerCase().replace(/\s/g, '')) || availableStyles.get('normal') || '';
+    const pageWidth = Number((section.match(/<w:pgSz\b[^>]*w:w="(\d+)"/) || [])[1] || 11906);
+    const margins = (section.match(/<w:pgMar\b[^>]*>/) || [''])[0];
+    const left = Number((margins.match(/w:left="(\d+)"/) || [])[1] || 1276), right = Number((margins.match(/w:right="(\d+)"/) || [])[1] || 1276);
+    const gutter = Number((margins.match(/w:gutter="(\d+)"/) || [])[1] || 0);
+    return { document, section, resolve, hasBullet: availableStyles.has('listbullet'), width: Math.max(1440, pageWidth - left - right - gutter) };
+  }
+  function makeDocx(md, entries, layout = 'card') {
+    const info = templateInfo(entries);
+    const paragraph = (text, style, options = {}) => {
+      const styleId = info.resolve(style);
+      const props = (styleId ? `<w:pStyle w:val="${escapeXml(styleId)}"/>` : '') + (options.props || '');
+      return `<w:p>${props ? `<w:pPr>${props}</w:pPr>` : ''}${runs(text, options)}</w:p>`;
+    };
+    const body = parse(md, layout).map(block => {
+      if (block.type === 'title') return paragraph(block.text, 'Title');
+      if (block.type === 'subtitle') return paragraph(block.text, 'Subtitle');
+      if (block.type === 'name') return paragraph(block.text, 'Normal', { size: 28, noBold: true });
+      if (block.type === 'heading') return paragraph(block.text, 'Heading' + block.level);
+      if (block.type === 'bullet') return paragraph((info.hasBullet ? '' : '• ') + block.text, info.hasBullet ? 'ListBullet' : 'Normal');
+      if (block.type === 'paragraph') return paragraph(block.text, 'Normal');
+      const hints = WIDTH_HINTS[block.rows[0].join('|')] || block.rows[0].map(() => 1);
+      const sum = hints.reduce((a, b) => a + b, 0);
+      const widths = hints.map(hint => Math.floor(hint / sum * info.width));
+      widths[widths.length - 1] += info.width - widths.reduce((a, b) => a + b, 0);
+      const borders = ['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(edge => `<w:${edge} w:val="single" w:sz="4" w:space="0" w:color="D9D9D9"/>`).join('');
+      const margins = [['top', 80], ['bottom', 80], ['left', 105], ['right', 105]].map(([edge, width]) => `<w:${edge} w:w="${width}" w:type="dxa"/>`).join('');
+      const rows = block.rows.map((row, ri) => `<w:tr><w:trPr><w:cantSplit/>${ri === 0 ? '<w:tblHeader/>' : ''}</w:trPr>${row.map((text, ci) => `<w:tc><w:tcPr><w:tcW w:w="${widths[ci]}" w:type="dxa"/>${ri === 0 ? '<w:shd w:val="clear" w:color="auto" w:fill="E8EDF0"/>' : ''}</w:tcPr>${paragraph(text, 'Normal', { bold: ri === 0, props: `<w:ind w:firstLine="0"/><w:spacing w:after="0" w:line="276" w:lineRule="auto"/>${ri === 0 ? '<w:keepNext/>' : ''}` })}</w:tc>`).join('')}</w:tr>`).join('');
+      return `<w:tbl><w:tblPr><w:tblW w:w="${info.width}" w:type="dxa"/><w:jc w:val="center"/><w:tblBorders>${borders}</w:tblBorders><w:tblCellMar>${margins}</w:tblCellMar><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${widths.map(width => `<w:gridCol w:w="${width}"/>`).join('')}</w:tblGrid>${rows}</w:tbl>`;
+    }).join('');
+    const document = info.document.replace(/<w:body(?:\s[^>]*)?>[\s\S]*?<\/w:body>/, () => `<w:body>${body}${info.section}</w:body>`);
+    const result = entries.map(([name, data]) => [name, name === 'word/document.xml' ? encoder.encode(document) : data]);
+    return zip(result);
+  }
+  function txtBytes(md) { return encoder.encode('\ufeff' + mdToTxt(md).replace(/\n/g, '\r\n')); }
+  function safeName(name) {
+    let result = name.replace(/\.(?:md|markdown)$/i, '').replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').replace(/[. ]+$/g, '').trim() || '未命名文档';
+    if (/^(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(result)) result = '_' + result;
+    return result;
+  }
+  root.Converter = { zip, unzip, crc32, mdToTxt, txtBytes, parse, inlineParts, escapeXml, makeDocx, templateInfo, safeName };
+  if (typeof module !== 'undefined') module.exports = root.Converter;
+})(globalThis);
+
+</script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const example = `# 人物设定档案
+
+人物设定卡（示例）
+
+艾琳 · 维尔
+
+这是一份演示文档。你可以直接修改，也可以导入自己的 Markdown 文件。
+
+## 一、基本档案
+
+| 项目 | 设定 |
+| --- | --- |
+| 姓名 | 艾琳 · 维尔 |
+| 身份 | 一位年轻的档案整理员 |
+| 特点 | 观察敏锐，习惯记录细节 |
+
+## 二、人物特征
+
+- **性格：** 温和、独立，对未知的事物抱有好奇。
+- **习惯：** 随身携带一本深蓝色笔记本。
+
+### 故事起点
+
+一封没有署名的信，打破了平静的日常。
+`;
+let nextId = 1;
+let files = [{ id: nextId++, name: '人物设定卡（示例）.md', content: example, example: true }];
+let selectedId = files[0].id, view = 'document', customTemplate = null, templatePromise = null, busy = false;
+function current() { return files.find(f => f.id === selectedId); }
+function status(message, error = false) { $('status').textContent = message; $('status').classList.toggle('error', error); }
+function renderFiles() {
+  $('fileList').replaceChildren(); $('fileCount').textContent = files.length;
+  for (const file of files) {
+    const row = document.createElement('div'); row.className = 'file-item' + (file.id === selectedId ? ' active' : '');
+    const select = document.createElement('button'); select.className = 'file-select'; select.title = file.name;
+    select.setAttribute('aria-pressed', String(file.id === selectedId));
+    const icon = document.createElement('span'); icon.className = 'file-icon'; icon.textContent = 'MD';
+    const meta = document.createElement('span'); meta.className = 'file-meta';
+    const title = document.createElement('strong'); title.textContent = file.name;
+    const sub = document.createElement('small'); sub.textContent = `${file.content.length.toLocaleString()} 字符${file.example ? ' · 示例' : ''}`;
+    meta.append(title, sub); select.append(icon, meta);
+    select.addEventListener('click', () => { selectedId = file.id; renderAll(); });
+    const remove = document.createElement('button'); remove.className = 'remove-file'; remove.textContent = '×';
+    remove.title = '移除此文件'; remove.setAttribute('aria-label', `移除 ${file.name}`);
+    remove.addEventListener('click', () => {
+      const index = files.indexOf(file); files.splice(index, 1);
+      if (file.id === selectedId) selectedId = files[Math.min(index, files.length - 1)]?.id ?? null;
+      renderAll(); status('文件已从待转换列表移除，电脑上的原文件不会删除。');
+    });
+    row.append(select, remove); $('fileList').append(row);
+  }
+}
+function inline(text) {
+  const fragment = document.createDocumentFragment();
+  for (const part of Converter.inlineParts(text)) {
+    if (part.bold) { const strong = document.createElement('strong'); strong.textContent = part.text; fragment.append(strong); }
+    else fragment.append(document.createTextNode(part.text));
+  }
+  return fragment;
+}
+function renderPreview() {
+  const file = current(); $('preview').replaceChildren();
+  $('charCount').textContent = (file?.content.length || 0).toLocaleString() + ' 字符';
+  if (!file || !file.content.trim()) {
+    const p = document.createElement('p'); p.textContent = '添加文件或输入内容后，预览会显示在这里。'; p.style.color = '#8797aa'; $('preview').append(p); return;
+  }
+  if (view === 'txt') { const pre = document.createElement('pre'); pre.textContent = Converter.mdToTxt(file.content); $('preview').append(pre); return; }
+  for (const block of Converter.parse(file.content, $('layoutSelect').value)) {
+    if (block.type === 'table') {
+      const wrap = document.createElement('div'); wrap.className = 'table-wrap'; const table = document.createElement('table');
+      block.rows.forEach((row, ri) => {
+        const tr = document.createElement('tr');
+        for (const text of row) { const cell = document.createElement(ri === 0 ? 'th' : 'td'); cell.append(inline(text)); tr.append(cell); }
+        table.append(tr);
+      });
+      wrap.append(table); $('preview').append(wrap); continue;
+    }
+    if (block.type === 'bullet') {
+      let list = $('preview').lastElementChild;
+      if (!list || list.tagName !== 'UL') { list = document.createElement('ul'); $('preview').append(list); }
+      const li = document.createElement('li'); li.append(inline(block.text)); list.append(li); continue;
+    }
+    const tag = block.type === 'title' ? 'h1' : block.type === 'heading' ? 'h' + Math.min(6, block.level + 1) : 'p';
+    const element = document.createElement(tag);
+    if (block.type === 'subtitle') element.className = 'subtitle';
+    if (block.type === 'name') element.className = 'name-line';
+    element.append(inline(block.text)); $('preview').append(element);
+  }
+}
+function updateSummary() {
+  const count = $('batchAll').checked ? files.length : Number(Boolean(current()));
+  const formats = Number($('formatTxt').checked) + Number($('formatDocx').checked);
+  $('exportSummary').textContent = `${count} 个文件 · ${formats} 种格式`;
+  $('exportHint').textContent = count * formats > 1 ? '结果打包为 ZIP，原文件不会被覆盖。' : '直接下载所选格式，原文件不会被覆盖。';
+  $('exportButton').disabled = busy || !count || !formats;
+}
+function renderAll() {
+  const file = current(); $('editor').value = file?.content || ''; $('editor').disabled = !file;
+  $('currentName').textContent = file?.name || '还没有文件'; $('renameButton').disabled = !file;
+  renderFiles(); renderPreview(); updateSummary();
+}
+$('editor').addEventListener('input', () => {
+  const file = current(); if (!file) return;
+  file.content = $('editor').value; file.example = false; renderPreview(); renderFiles(); status('');
+});
+$('newButton').addEventListener('click', () => {
+  const names = new Set(files.map(f => f.name)); let n = 1;
+  while (names.has(`未命名文档 ${n}.md`)) n++;
+  const file = { id: nextId++, name: `未命名文档 ${n}.md`, content: '' };
+  files.push(file); selectedId = file.id; renderAll(); $('editor').focus(); status('可以粘贴或输入 Markdown 内容。');
+});
+async function importFiles(fileObjects) {
+  const imported = [], errors = [];
+  for (const file of Array.from(fileObjects)) {
+    if (!/\.(md|markdown)$/i.test(file.name)) { errors.push(`${file.name}：请选择 .md 或 .markdown 文件`); continue; }
+    if (file.size > 2 * 1024 * 1024) { errors.push(`${file.name}：单个 Markdown 文件不能超过 2 MB`); continue; }
+    try {
+      const text = new TextDecoder('utf-8', { fatal: true }).decode(await file.arrayBuffer());
+      if (!text.trim()) { errors.push(`${file.name}：文件没有内容`); continue; }
+      imported.push({ id: nextId++, name: file.name, content: text.replace(/^\ufeff/, '') });
+    } catch { errors.push(`${file.name}：无法读取，请将文件保存为 UTF-8 编码后重试`); }
+  }
+  if (imported.length) {
+    files = files.filter(file => !file.example); files.push(...imported); selectedId = imported[0].id; renderAll();
+  }
+  status([imported.length ? `已添加 ${imported.length} 个文件。` : '', ...errors].filter(Boolean).join(' '), Boolean(errors.length));
+}
+$('dropzone').addEventListener('click', () => $('fileInput').click());
+$('fileInput').addEventListener('change', async e => { await importFiles(e.target.files); e.target.value = ''; });
+// Prevent the browser from navigating away when files are dropped elsewhere.
+document.addEventListener('dragover', e => { e.preventDefault(); });
+document.addEventListener('drop', e => { e.preventDefault(); });
+$('dropzone').addEventListener('dragover', () => $('dropzone').classList.add('dragging'));
+$('dropzone').addEventListener('dragleave', () => $('dropzone').classList.remove('dragging'));
+$('dropzone').addEventListener('drop', async e => { $('dropzone').classList.remove('dragging'); await importFiles(e.dataTransfer.files); });
+function setView(next) {
+  view = next;
+  document.querySelectorAll('[data-view]').forEach(button => { const active = button.dataset.view === view; button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; });
+  $('preview').setAttribute('aria-labelledby', view === 'document' ? 'tabDocument' : 'tabTxt'); renderPreview();
+}
+document.querySelectorAll('[data-view]').forEach(button => {
+  button.addEventListener('click', () => setView(button.dataset.view));
+  button.addEventListener('keydown', event => {
+    if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault(); const next = event.key === 'Home' ? 'document' : event.key === 'End' ? 'txt' : view === 'document' ? 'txt' : 'document';
+      setView(next); $(next === 'document' ? 'tabDocument' : 'tabTxt').focus();
+    }
+  });
+});
+$('layoutSelect').addEventListener('change', () => {
+  $('layoutHint').textContent = $('layoutSelect').value === 'card' ? '首个标题后的两段用作副标题和姓名。' : '按普通标题、段落和列表排版。'; renderPreview();
+});
+function getDefaultTemplate() {
+  if (!templatePromise) templatePromise = Converter.unzip(Uint8Array.from(atob(DEFAULT_TEMPLATE_BASE64), c => c.charCodeAt(0)));
+  return templatePromise;
+}
+$('templateButton').addEventListener('click', () => $('templateInput').click());
+$('templateInput').addEventListener('change', async event => {
+  const file = event.target.files[0]; event.target.value = ''; if (!file) return;
+  try {
+    if (!/\.docx$/i.test(file.name)) throw new Error('请选择 .docx 格式的 Word 模板。');
+    if (file.size > 20 * 1024 * 1024) throw new Error('Word 模板不能超过 20 MB。');
+    status('正在读取 Word 样式模板…');
+    const entries = await Converter.unzip(new Uint8Array(await file.arrayBuffer())); Converter.templateInfo(entries);
+    customTemplate = entries; $('templateName').textContent = file.name; $('templateName').title = file.name; $('templateReset').hidden = false;
+    status('模板已更换。导出时会保留它的样式与页面设置，正文使用当前 Markdown 内容。');
+  } catch (error) { status('模板未更换：' + error.message, true); }
+});
+$('templateReset').addEventListener('click', () => {
+  customTemplate = null; $('templateName').textContent = '内置排版模板'; $('templateName').title = '公开版中性排版模板'; $('templateReset').hidden = true; status('已恢复内置排版模板。');
+});
+['formatTxt', 'formatDocx', 'batchAll'].forEach(id => $(id).addEventListener('change', updateSummary));
+function download(bytes, name, type) {
+  const url = URL.createObjectURL(new Blob([bytes], { type })), link = document.createElement('a');
+  link.href = url; link.download = name; document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+$('exportButton').addEventListener('click', async () => {
+  if (busy) return;
+  const targets = ($('batchAll').checked ? files : [current()]).filter(Boolean).map(file => ({ ...file }));
+  const txt = $('formatTxt').checked, docx = $('formatDocx').checked, layout = $('layoutSelect').value;
+  if (!targets.length || (!txt && !docx)) return;
+  const empty = targets.find(file => !file.content.trim());
+  if (empty) { status(`“${empty.name}”没有内容。请输入文字或移除这个文件后重试。`, true); return; }
+  if (targets.some(file => new TextEncoder().encode(file.content).length > 2 * 1024 * 1024)) { status('单个 Markdown 文件不能超过 2 MB，请缩短内容后重试。', true); return; }
+  busy = true; updateSummary(); status('正在转换，请稍候…');
+  try {
+    const template = docx ? (customTemplate || await getDefaultTemplate()) : null;
+    const outputs = [], names = new Set();
+    for (let i = 0; i < targets.length; i++) {
+      const file = targets[i]; const base = Converter.safeName(file.name); let name = base, number = 2;
+      while (names.has(name.toLowerCase())) name = `${base} (${number++})`;
+      names.add(name.toLowerCase());
+      if (txt) outputs.push([name + '.txt', Converter.txtBytes(file.content)]);
+      if (docx) outputs.push([name + '.docx', Converter.makeDocx(file.content, template, layout)]);
+      status(`已转换 ${i + 1} / ${targets.length} 个文件…`);
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    if (outputs.length === 1) download(outputs[0][1], outputs[0][0], txt ? 'text/plain;charset=utf-8' : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    else download(Converter.zip(outputs), targets.length === 1 ? Converter.safeName(targets[0].name) + '（转换结果）.zip' : 'Markdown转换结果.zip', 'application/zip');
+    status(`转换完成，已发起下载：${targets.length} 个文件，${outputs.length} 个结果。请查看浏览器下载记录${outputs.length > 1 ? '，解压 ZIP 后即可使用' : ''}。`);
+  } catch (error) { status('转换失败：' + error.message, true); }
+  finally { busy = false; updateSummary(); }
+});
+$('helpButton').addEventListener('click', () => { $('helpPanel').hidden = !$('helpPanel').hidden; $('helpButton').setAttribute('aria-expanded', String(!$('helpPanel').hidden)); });
+$('renameButton').addEventListener('click', () => { if (!current()) return; $('renameInput').value = Converter.safeName(current().name); $('renameDialog').showModal(); $('renameInput').select(); });
+$('cancelRename').addEventListener('click', () => $('renameDialog').close());
+$('renameForm').addEventListener('submit', event => {
+  event.preventDefault(); if (!current()) { $('renameDialog').close(); return; }
+  current().name = Converter.safeName($('renameInput').value) + '.md'; $('renameDialog').close(); renderAll(); status('名称已更新，电脑上的原文件不会重命名。');
+});
+renderAll();
+
+</script>
+</body>
+</html>
